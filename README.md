@@ -29,3 +29,7 @@ vagy
 ## példa kimenet
 
 [👉 out.pdf](./out.pdf)
+
+## köszönet
+
+- Versényi Péternek, az alap programért (C++)
