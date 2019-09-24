@@ -145,13 +145,13 @@ class Formula():
             right_str = ''
 
             if self.left:
-                if ((self.left.operator == self.operator and self.operator != OPERATOR_IMPLIES)                     or (self.operator == OPERATOR_IMPLIES and self.left.operator in [OPERATOR_AND, OPERATOR_OR])):
+                if ((self.left.operator == self.operator and self.operator != OPERATOR_IMPLIES) or (self.operator == OPERATOR_IMPLIES and self.left.operator in [OPERATOR_AND, OPERATOR_OR])):
                     left_str = self.left.inorder_minimize()
                 else:
                     left_str = self.left.inorder_minimize(True)
 
             if self.right:
-                if ((self.right.operator == self.operator and self.operator != OPERATOR_IMPLIES)                     or (self.operator == OPERATOR_IMPLIES and self.right.operator in [OPERATOR_AND, OPERATOR_OR])):
+                if ((self.right.operator == self.operator and self.operator != OPERATOR_IMPLIES) or (self.operator == OPERATOR_IMPLIES and self.right.operator in [OPERATOR_AND, OPERATOR_OR])):
                     right_str = self.right.inorder_minimize()
                 else:
                     right_str = self.right.inorder_minimize(True)
