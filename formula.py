@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
+import sys
 import fileinput as fi
+from TeX import TeX
 
 OPERATOR_NOT        = 'n'
 OPERATOR_AND        = 'c'
@@ -8,6 +10,21 @@ OPERATOR_OR         = 'd'
 OPERATOR_IMPLIES    = 'i'
 OPERATORS           = [OPERATOR_NOT, OPERATOR_AND, OPERATOR_OR, OPERATOR_IMPLIES]
 OPERATORS_N         = [OPERATOR_AND, OPERATOR_OR, OPERATOR_IMPLIES]
+TEXOPS = {
+    OPERATOR_IMPLIES: '$\supset$',
+    OPERATOR_NOT: '$\lnot$',
+    OPERATOR_OR: '$\lor$',
+    OPERATOR_AND: '$\land$'
+}
+
+def to_tex(string):
+    ret = ""
+    for c in string:
+        if c in OPERATORS:
+            ret += ' ' + TEXOPS[c].replace('$', '') + ' '
+        else:
+            ret += c
+    return ret
 
 def substring(string, fromm, howmany):
     return string[fromm:fromm+howmany]
@@ -80,6 +97,19 @@ class Formula():
 
         if self.left:
             self.left.stree(depth + 1)
+
+    def textree(self):
+        ret = r'''['''
+        ret += TEXOPS[self.operator] if self.operator in OPERATORS else '$' + self.operator + '$'
+
+        if self.left:
+            ret += self.left.textree()
+
+        if self.right:
+            ret += self.right.textree()
+
+        ret += r''']'''
+        return ret
 
     def inorder(self):
         if str.isupper(self.operator):
@@ -167,29 +197,19 @@ class Formula():
 
         return sum
 
-    def tex(self):
-        texops = {
-                OPERATOR_IMPLIES: '$\supset$',
-                OPERATOR_NOT: '$\lnot$',
-                OPERATOR_OR: '$\lor$',
-                OPERATOR_AND: '$\land$'
-                }
-
-
-        ret = r'''['''
-        ret += texops[self.operator] if self.operator in OPERATORS else '$' + self.operator + '$'
-
-        if self.left:
-            ret += self.left.tex()
-
-        if self.right:
-            ret += self.right.tex()
-
-        ret += r''']'''
-        return ret
 
 if __name__ == '__main__':
-    for formula in fi.input():
+    argv = sys.argv
+    argc = len(argv)
+    texmode = False
+
+    if argc == 2 and argv[1] == '--tex':
+        print('TeX mode')
+        texmode = True
+        helper = TeX('Formulaelemzés')
+
+
+    for formula in sys.stdin.readlines():
         formula = formula.strip('\n')
 
         print('> kapott formula:', formula)
@@ -197,16 +217,26 @@ if __name__ == '__main__':
 
         if fully_braced(formula):
             f = Formula(formula)
-            print('> szerkezeti fa:')
-            f.stree()
-            print('> inorder:', f.inorder())
-            print('> zárójel elhagyással:', f.inorder_minimize())
-            print('> részformulák halmaza:')
-            for s in f.subformulas():
-                print('\t -', s)
-            print('logikai összetettség:', f.complexity())
-            print('tex:')
-            print(f.tex())
+
+            if texmode:
+                rf = ""
+                for x in f.subformulas():
+                    rf += to_tex(x) + ', '
+                rf = rf.rstrip(', ')
+
+                content = helper.prep_content(to_tex(f.inorder()), f.textree(), to_tex(f.inorder_minimize()), rf, f.complexity())
+                helper.add_box(content)
+                helper.save('out.tex')
+                helper.render()
+            else:
+                print('> szerkezeti fa:')
+                f.stree()
+                print('> inorder:', f.inorder())
+                print('> zárójel elhagyással:', f.inorder_minimize())
+                print('> részformulák halmaza:')
+                for s in f.subformulas():
+                    print('\t -', s)
+                print('logikai összetettség:', f.complexity())
 
         print('-------------------------------------------')
 
