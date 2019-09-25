@@ -224,10 +224,14 @@ if __name__ == '__main__':
                     rf += to_tex(x) + ', '
                 rf = rf.rstrip(', ')
 
-                content = helper.prep_content(to_tex(f.inorder()), f.textree(), to_tex(f.inorder_minimize()), rf, f.complexity())
+                content = helper.prep_content(
+                        to_tex(f.inorder()),\
+                        f.textree(),\
+                        to_tex(f.inorder_minimize()),\
+                        rf,\
+                        f.complexity())
                 helper.add_box(content)
-                helper.save('out.tex')
-                helper.render()
+
             else:
                 print('> szerkezeti fa:')
                 f.stree()
@@ -238,6 +242,10 @@ if __name__ == '__main__':
                     print('\t -', s)
                 print('logikai összetettség:', f.complexity())
 
-        print('-------------------------------------------')
+        print('')
 
+    if texmode:
+        helper.save('out.tex')
+        helper.render()
+        helper.clean()
 

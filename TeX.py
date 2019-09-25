@@ -77,12 +77,16 @@ class TeX:
             f.write(str(self))
 
     def render(self):
+        self.basename = os.path.splitext(self.name)[0]
         commandLine = subprocess.Popen(
                 ['pdflatex', self.name],
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL)
         commandLine.communicate()
 
-        os.unlink('out.tex')
-        os.unlink('out.log')
-        os.unlink('out.aux')
+    def clean(self):
+        for ext in ['.tex', '.log', '.aux']:
+            try:
+                os.unlink(self.basename + ext)
+            except:
+                pass
