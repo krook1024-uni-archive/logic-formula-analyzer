@@ -103,10 +103,10 @@ class Formula():
         ret += TEXOPS[self.operator] if self.operator in OPERATORS else '$' + self.operator + '$'
 
         if self.left:
-            ret += self.left.textree()
+            ret += self.left.textree_bin()
 
         if self.right:
-            ret += self.right.textree()
+            ret += self.right.textree_bin()
 
         ret += r''']'''
         return ret
