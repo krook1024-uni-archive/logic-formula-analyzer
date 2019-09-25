@@ -53,7 +53,7 @@ class TeX:
         ret = r'''\textbf{Formula:} '''
         ret += "$" + str(formula) + "$" + '\n\n'
 
-        ret += r'''\textbf{Bináris fája:}
+        ret += r'''\textbf{Kifejezésfája:}
 \begin{center}\begin{forest}
         '''
         ret += binfa + '\n'
