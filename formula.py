@@ -17,14 +17,14 @@ TEXOPS = {
     OPERATOR_AND: '$\land$'
 }
 
-def to_tex(string):
+def to_tex(string, add_math_signs = False):
     ret = ""
     for c in string:
         if c in OPERATORS:
             ret += ' ' + TEXOPS[c].replace('$', '') + ' '
         else:
             ret += c
-    return ret
+    return ('$' if add_math_signs else '') + ret + ('$' if add_math_signs else '')
 
 def substring(string, fromm, howmany):
     return string[fromm:fromm+howmany]
@@ -98,7 +98,7 @@ class Formula():
         if self.left:
             self.left.stree(depth + 1)
 
-    def textree(self):
+    def textree_bin(self):
         ret = r'''['''
         ret += TEXOPS[self.operator] if self.operator in OPERATORS else '$' + self.operator + '$'
 
@@ -110,6 +110,21 @@ class Formula():
 
         ret += r''']'''
         return ret
+
+    def textree(self):
+        ret = r'''[''' + to_tex(self.inorder(), True)
+
+        if self.left:
+            ret += self.left.textree()
+
+        if self.right:
+            ret += self.right.textree()
+
+        ret += r''']'''
+        return ret.replace('\n', '')
+
+    def textree_gather(self):
+        pass
 
     def inorder(self):
         if str.isupper(self.operator):
@@ -226,6 +241,7 @@ if __name__ == '__main__':
 
                 content = helper.prep_content(
                         to_tex(f.inorder()),\
+                        f.textree_bin(),\
                         f.textree(),\
                         to_tex(f.inorder_minimize()),\
                         rf,\

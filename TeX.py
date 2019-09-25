@@ -49,16 +49,21 @@ class TeX:
 } \vspace{5mm}
         '''
 
-    def prep_content(self, formula, szerkfa, minimized, rf, complexity):
+    def prep_content(self, formula, binfa, szerkfa, minimized, rf, complexity):
         ret = r'''\textbf{Formula:} '''
         ret += "$" + str(formula) + "$" + '\n\n'
 
-        ret += r'''\textbf{Szerkezeti fája:} \newline
-\begin{center}
-\begin{forest}
+        ret += r'''\textbf{Bináris fája:}
+\begin{center}\begin{forest}
+        '''
+        ret += binfa + '\n'
+        ret += r'''\end{forest}\end{center}'''
+
+        ret += r'''\textbf{Szerkezeti fája:}
+\begin{center}\begin{forest}
         '''
         ret += szerkfa + '\n'
-        ret += r'''\end{forest}\end{center}''' + '\n\n'
+        ret += r'''\end{forest}\end{center}'''
 
         ret += r'''\textbf{Zárójelelhagyással:} '''
         ret += "$" + minimized + "$" + '\n\n'
